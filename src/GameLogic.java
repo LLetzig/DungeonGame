@@ -1,0 +1,157 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public  class GameLogic {
+    // für datenbank
+    DBM db = new DBM();
+    //gui :)
+    String splash = """
+            ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+            █                                                                               █
+            █   ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗             █
+            █   ██╔══██╗██║   ██║████╗  ██║██╔════╝ ██╔════╝██╔═══██╗████╗  ██║             █
+            █   ██║  ██║██║   ██║██╔██╗ ██║██║  ███╗█████╗  ██║   ██║██╔██╗ ██║             █
+            █   ██║  ██║██║   ██║██║╚██╗██║██║   ██║██╔══╝  ██║   ██║██║╚██╗██║             █
+            █   ██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝███████╗╚██████╔╝██║ ╚████║             █
+            █   ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝             █
+            █                                                                               █
+            █   ██████╗ ███████╗██╗     ██╗   ██╗███████╗██████╗                            █
+            █   ██╔══██╗██╔════╝██║     ██║   ██║██╔════╝██╔══██╗                           █
+            █   ██║  ██║█████╗  ██║     ██║   ██║█████╗  ██████╔╝                           █
+            █   ██║  ██║██╔══╝  ██║     ╚██╗ ██╔╝██╔══╝  ██╔══██╗                           █
+            █   ██████╔╝███████╗███████╗ ╚████╔╝ ███████╗██║  ██║                           █
+            █   ╚═════╝ ╚══════╝╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝                           █
+            █                                                                               █
+            █                                                                               █
+            █                          Choose an option:                                    █
+            █                          [1]new game                                          █
+            █                          [2]continue                                          █
+            █                          [3]Exit                                              █
+            █                                                                               █
+            ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+            """;
+    String stage = """                  
+                                        Choose dungeon depth
+            ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+            █                                                                               █
+            █                           Stage[1] : easy encounters                          █
+            █                                                                               █
+            █                           Stage[1] : easy to medium encounters                █
+            █                                                                               █
+            █                           Stage[1] : medium encounters                        █
+            █                                                                               █
+            █                           Stage[1] : hard encounters                          █
+            █                                                                               █
+            █                           Stage[5] : don't                                    █
+            █                                                                               █
+            ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+            """;
+    static String theCharGang = """
+                                        Choose your Fighter
+            ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+            █                                                                               █
+            █            Mage                    Rogue                  Warrior             █
+            █                                                                               █
+            █         -reads books             -knife nerd           -smooth brained        █
+            █           all day                                                             █
+            █         + lifedrain              +knife nerd           + too dumb             █
+            █                                                          to feel pain         █
+            █                                                                               █
+            █             [1]                      [2]                      [3]             █
+            █                                                                               █
+            ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+            """;
+
+    /**
+     * es ist ein menü...
+     * @return neuer oder datenbank char
+     */
+    public Character menu() {
+        Character player = new Warrior("menuman");
+        int value = 0;
+        System.out.println(splash);
+        Scanner sc = new Scanner(System.in);
+        while(value < 1 || value >3){
+            value = sc.nextInt();
+        }
+        sc.close();
+        while(true){
+            if (value == 1){String name =GameLogic.chooseName();
+                player = GameLogic.chooseChar(name);
+            }else if (value==2) {player = db.getMage(1);
+            }else if (value==3) {System.out.println("bye");
+            }else{ System.out.println("1,2 oder 3");
+            break;}
+
+        }
+        return player;
+    }
+
+    /**
+     *
+     * @return gewählter name
+     */
+    public static String chooseName() {
+        Scanner scn = new Scanner(System.in);
+        System.out.print("Enter name:");
+        return scn.nextLine();
+    }
+    // wählen der klasse
+    public static Character chooseChar(String name) {
+        Scanner sc = new Scanner(System.in);
+        int cl = 0;
+        System.out.println(theCharGang);
+        Character p = new Warrior("ULF");
+        System.out.println("Choose your class");
+        do {
+            cl = sc.nextInt();
+            switch (cl) {
+                case 1 -> p = new Mage(name);
+                case 2 -> p = new Rogue(name);
+                case 3 -> p = new Warrior(name);
+                default -> System.out.println("Wrong");
+            }
+        } while (cl < 1 || cl > 3);
+        return p;
+    }
+    public int setStage(){
+        Scanner sc = new Scanner(System.in);
+        int stageLvl=0;
+        while (stageLvl<1 && stageLvl>5){
+            System.out.println(stage);
+            stageLvl =sc.nextInt();
+        }
+
+
+
+        return stageLvl;
+    }
+    // kreiert eine Liste von gegnern angepasst an das dungeon lvl
+    public ArrayList<Character> createStage(int lvl){
+        int rarity=0;
+        switch(lvl){
+            case 1 -> rarity = 1;
+            case 2 -> rarity = (Math.random() * 2) < 1 ? 1 : 2;
+            case 3 -> rarity =2;
+            case 4 -> rarity = (Math.random() * 3) < 2 ? 2 : 3;
+            case 5 -> rarity =3;
+        }
+        return new ArrayList<>(Arrays.asList(new Monster(Monster.nameMyMonster(rarity),rarity,lvl),
+                new Monster(Monster.nameMyMonster(rarity),rarity,lvl),
+                new Monster(Monster.nameMyMonster(rarity),rarity,lvl)));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
