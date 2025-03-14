@@ -75,8 +75,11 @@ public class Warrior extends Character {
     }
 
 
-    public void defCalc(double dmg) {
+    public String defCalc(double dmg) {
+        double diff = currentHealth;
         currentHealth -= dmg - currentArmor;
+        currentArmor -= diff -currentHealth;
+        return Double.toString(diff - currentHealth);
     }
 
     @Override

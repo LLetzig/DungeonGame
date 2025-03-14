@@ -28,8 +28,10 @@ public class Monster extends Character {
     }
 
     @Override
-    public void defCalc(double dmg) {
-
+    public String defCalc(double dmg) {
+            double diff = currentHealth;
+            currentHealth -= dmg;
+            return Double.toString(diff - currentHealth);
     }
 
     @Override

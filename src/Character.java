@@ -111,7 +111,7 @@ public abstract class Character {
 
     abstract public void dmgCalc();
     // muss daß sein?
-    abstract public void defCalc(double dmg);
+    abstract public String defCalc(double dmg);
 
     abstract public void onLvlUp();
 

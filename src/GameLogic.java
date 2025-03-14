@@ -98,7 +98,12 @@ public  class GameLogic {
         System.out.print("Enter name:");
         return scn.nextLine();
     }
-    // wählen der klasse
+
+    /**
+     *
+     * @param name kommt von chooseName()
+     * @return gewähltes klassenobjekt für (player)
+     */
     public static Character chooseChar(String name) {
         Scanner sc = new Scanner(System.in);
         int cl = 0;
@@ -116,6 +121,11 @@ public  class GameLogic {
         } while (cl < 1 || cl > 3);
         return p;
     }
+
+    /**
+     * lässt dungeon lvl wählen
+     * @return dungeon lvl -> geht nach createStage()
+     */
     public int setStage(){
         Scanner sc = new Scanner(System.in);
         int stageLvl=0;
@@ -123,12 +133,13 @@ public  class GameLogic {
             System.out.println(stage);
             stageLvl =sc.nextInt();
         }
-
-
-
         return stageLvl;
     }
-    // kreiert eine Liste von gegnern angepasst an das dungeon lvl
+
+    /**
+     * kreiert eine Liste von gegnern angepasst an das dungeon lvl (parameter von setStage() wird übergeben
+      */
+
     public ArrayList<Character> createStage(int lvl){
         int rarity=0;
         switch(lvl){
@@ -142,7 +153,65 @@ public  class GameLogic {
                 new Monster(Monster.nameMyMonster(rarity),rarity,lvl),
                 new Monster(Monster.nameMyMonster(rarity),rarity,lvl)));
     }
-}
+
+    /**
+     * bestimmen der richtigen klasse, um Spielstand in db zu schreiben
+     */
+
+    public void saveChar(Character player) {
+        DBM dbm = new DBM();
+        switch (player.getClass().getSimpleName()) {
+            case "Mage" -> dbm.insertMage((Mage) player);
+            case "Warrior" -> dbm.insertWarrior((Warrior) player);
+            case "Rogue" -> dbm.insertRogue((Rogue) player);
+        }
+    }
+    public void fightStage(ArrayList<Character> stage, Character player){
+
+        for(Character m: stage){
+            String mdmg;
+            String pdmg;
+            m.dmgCalc();
+            player.dmgCalc();
+            System.out.println(m.name + m.lvl + " blockiert den weg und begibt sich in Angriffsstellung" );
+            if (player.getInitiative()<m.getInitiative()) {
+                System.out.println(m.name + " ist flinker und greift zuerst an");
+                while (m.currentHealth<=0 || player.currentHealth<=0){
+                    mdmg = player.defCalc(m.getDmg());
+                    System.out.println( m.name + " fügt dir " + mdmg + " Schaden zu.");
+                    pdmg = m.defCalc(player.getDmg());
+                    System.out.println( "Du greifst an und fügst " + pdmg + " Schaden zu.");}
+            }else {
+                System.out.println("Du bist schneller als " + m.name);
+                while (m.currentHealth <= 0 || player.currentHealth <= 0) {
+                    pdmg = m.defCalc(player.getDmg());
+                    System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
+                    mdmg = player.defCalc(m.getDmg());
+                    System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
+                }
+            }
+            if(m.currentHealth<=0){
+                System.out.println("Du warst gegen " +m.name +" siegreich und setzt deinen weg durch den Dungeon fort");
+                if (player.currentExp>=player.maxExp){
+                    player.onLvlUp();
+                }
+            }else{
+                System.out.println(m.name +" hat dich besiegt. GAME OVER ");
+                break;
+            }
+
+            }
+        saveChar(player);
+        }
+        public boolean nextStage(){
+        Scanner cont = new Scanner(System.in);
+        String answ =cont.nextLine();
+            System.out.println("Do you want to continue? Y/N");
+            if (answ.equalsIgnoreCase("y")) {return true;}
+            else {return false}
+        }
+    }
+
 
 
 

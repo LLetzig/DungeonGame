@@ -1,7 +1,9 @@
 import java.sql.*;
 
 public class DBM {
-
+    /**
+     * erstellen von Spielstand tabellen, falls nicht vorhanden.
+     */
     public  void createTables() {
         String warrior = """
         CREATE TABLE IF NOT EXISTS Warrior (
@@ -71,7 +73,10 @@ public class DBM {
     }
 
 
-
+    /**
+     * Schreibt ein Warriorobjekt in die Warriortabelle
+     * @param warrior (player)
+     */
     public void insertWarrior(Warrior warrior) {
         String sql = "INSERT INTO Warrior (name, maxHealth, currentHealth, baseAttack, lvl, initiative, dmg, maxExp, currentExp, strength, maxArmor, currentArmor) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -100,18 +105,11 @@ public class DBM {
         }
     }
 
-    public  void insertChar(String name, String email) {
-        String sql = "INSERT INTO users(name, email) VALUES(?, ?)";
-        try (Connection conn = DBH.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.executeUpdate();
-            System.out.println("User added: " + name);
-        } catch (SQLException e) {
-            System.out.println("Insert failed: " + e.getMessage());
-        }
-    }
+
+    /**
+     * Schreibt ein Magerobjekt in die Magetabelle
+     * @param mage (player)
+     */
     public void insertMage(Mage mage) {
         String sql = "INSERT INTO Mage (name, maxHealth, currentHealth, baseAttack, lvl, initiative, dmg, maxExp, currentExp, mana, intelligence) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -138,7 +136,10 @@ public class DBM {
             System.out.println("Error inserting Mage: " + e.getMessage());
         }
     }
-
+    /**
+     * Schreibt ein Rogueobjekt in die Roguetabelle
+     * @param rogue (player)
+     */
     public void insertRogue(Rogue rogue) {
         String sql = "INSERT INTO Rogue (name, maxHealth, currentHealth, baseAttack, lvl, initiative, dmg, maxExp, currentExp, dexterity, crit, evasion) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -166,6 +167,12 @@ public class DBM {
             System.out.println("Error inserting Rogue: " + e.getMessage());
         }
     }
+
+    /**
+     * erstellt Warrior Objekt
+     * @param id
+     * @return Warrior obj
+     */
     public Warrior getWarrior(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
         try (Connection conn = DBH.connect();
@@ -195,6 +202,12 @@ public class DBM {
         }
         return null;
     }
+
+    /**
+     * erstellt Rogueobjekt
+     * @param id
+     * @return
+     */
     public Rogue getRogue(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
         try (Connection conn = DBH.connect();
@@ -224,6 +237,12 @@ public class DBM {
         }
         return null;
     }
+
+    /**
+     * erstellt Rogueobjekt
+     * @param id
+     * @return
+     */
     public Mage getMage(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
         try (Connection conn = DBH.connect();
@@ -253,4 +272,36 @@ public class DBM {
         }
         return null;
     }
+
+    /**
+     * Anzeige aller Spielstände
+     */
+    public void showAllSaves(){
+        String[] tables = {"warrior", "rogue", "mage"};
+
+        try (Connection conn = DBH.connect();
+             Statement stmt = conn.createStatement()) {
+
+            for (String table : tables) {
+                String query = "SELECT name, lvl FROM " + table;
+                try (ResultSet rs = stmt.executeQuery(query)) {
+                    System.out.println("=== " + table.toUpperCase() + " ===");
+
+                    int columnCount = rs.getMetaData().getColumnCount();
+                    while (rs.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            System.out.print(table + rs.getMetaData().getColumnName(i) + ": " + rs.getString(i) + " | ");
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
+

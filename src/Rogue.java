@@ -56,12 +56,16 @@ public class Rogue extends Character {
     }
 
     @Override
-    public void defCalc(double dmg) {
+    public String defCalc(double dmg) {
+       double diff = currentHealth;
         boolean b = evasion < Math.random();
         if (b) {
             currentHealth -= dmg;
-
+            return Double.toString(diff - currentHealth);
+        }else{
+            return "you evaded!! " + Double.toString(diff - currentHealth);
         }
+
     }
 
     @Override
