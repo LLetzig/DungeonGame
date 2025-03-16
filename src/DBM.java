@@ -95,7 +95,7 @@ public class DBM {
             pstmt.setInt(9, warrior.getCurrentExp());
             pstmt.setInt(10, warrior.getStrength());
             pstmt.setInt(11, warrior.getMaxArmor());
-            pstmt.setInt(12, warrior.getCurrentArmor());
+            pstmt.setDouble(12, warrior.getCurrentArmor());
 
             pstmt.executeUpdate();
             System.out.println("Warrior inserted successfully!");

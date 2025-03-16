@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public  class GameLogic {
+public class GameLogic {
     // für datenbank
     DBM db = new DBM();
     //gui :)
@@ -38,11 +38,11 @@ public  class GameLogic {
             █                                                                               █
             █                           Stage[1] : easy encounters                          █
             █                                                                               █
-            █                           Stage[1] : easy to medium encounters                █
+            █                           Stage[2] : easy to medium encounters                █
             █                                                                               █
-            █                           Stage[1] : medium encounters                        █
+            █                           Stage[3] : medium encounters                        █
             █                                                                               █
-            █                           Stage[1] : hard encounters                          █
+            █                           Stage[4] : hard encounters                          █
             █                                                                               █
             █                           Stage[5] : don't                                    █
             █                                                                               █
@@ -66,6 +66,7 @@ public  class GameLogic {
 
     /**
      * es ist ein menü...
+     *
      * @return neuer oder datenbank char
      */
     public Character menu() {
@@ -73,34 +74,44 @@ public  class GameLogic {
         int value = 0;
         System.out.println(splash);
         Scanner sc = new Scanner(System.in);
-        while(value < 1 || value >3){
+        while (value < 1 || value > 3) {
             value = sc.nextInt();
         }
-        sc.close();
-        while(true){
-            if (value == 1){String name =GameLogic.chooseName();
+        sc.nextLine();
+
+        while (true) {
+            if (value == 1) {
+                String name = GameLogic.chooseName();
                 player = GameLogic.chooseChar(name);
-            }else if (value==2) {player = db.getMage(1);
-            }else if (value==3) {System.out.println("bye");
-            }else{ System.out.println("1,2 oder 3");
-            break;}
+                System.out.println(player);
+                break;
+            } else if (value == 2) {
+                player = db.getMage(1);
+            } else if (value == 3) {
+                System.out.println("bye");
+            } else {
+                System.out.println("1,2 oder 3");
+                break;
+            }
 
         }
         return player;
     }
 
     /**
-     *
      * @return gewählter name
      */
     public static String chooseName() {
+        String auswahl = "";
         Scanner scn = new Scanner(System.in);
         System.out.print("Enter name:");
-        return scn.nextLine();
+        if (scn.hasNextLine()) {
+            auswahl = scn.nextLine();
+        }
+        return auswahl;
     }
 
     /**
-     *
      * @param name kommt von chooseName()
      * @return gewähltes klassenobjekt für (player)
      */
@@ -124,34 +135,54 @@ public  class GameLogic {
 
     /**
      * lässt dungeon lvl wählen
+     *
      * @return dungeon lvl -> geht nach createStage()
      */
-    public int setStage(){
+    public int setStage() {
         Scanner sc = new Scanner(System.in);
-        int stageLvl=0;
-        while (stageLvl<1 && stageLvl>5){
+        int stageLvl = 0;
+        while (stageLvl < 1 || stageLvl > 5) {
             System.out.println(stage);
-            stageLvl =sc.nextInt();
+            stageLvl = sc.nextInt();
         }
         return stageLvl;
     }
 
     /**
      * kreiert eine Liste von gegnern angepasst an das dungeon lvl (parameter von setStage() wird übergeben
-      */
+     */
 
-    public ArrayList<Character> createStage(int lvl){
-        int rarity=0;
-        switch(lvl){
-            case 1 -> rarity = 1;
-            case 2 -> rarity = (Math.random() * 2) < 1 ? 1 : 2;
-            case 3 -> rarity =2;
-            case 4 -> rarity = (Math.random() * 3) < 2 ? 2 : 3;
-            case 5 -> rarity =3;
+    public ArrayList<Character> createStage(int stageLvl) {
+        int rarity = 0;
+        int mLvl = 1;
+        switch (stageLvl) {
+            case 1 -> {
+                rarity = 1;
+                mLvl =  (int)Math.round(Math.random() + 1) ;
+            }
+            case 2 -> {
+                rarity = (Math.random() * 2) < 1 ? 1 : 2;
+                mLvl =  (int)Math.round((Math.random() *2)+ 1) ;
+            }
+
+            case 3 -> {
+                rarity = 2;
+                mLvl = (int)Math.round(Math.random() + 2) ;
+            }
+            case 4 -> {
+                rarity = (Math.random() * 3) < 2 ? 2 : 3;
+                mLvl =  (int)Math.round((Math.random() *2)+ 2) ;
+            }
+            case 5 -> {
+                rarity = 3;
+                mLvl = 8;
+            }
+
         }
-        return new ArrayList<>(Arrays.asList(new Monster(Monster.nameMyMonster(rarity),rarity,lvl),
-                new Monster(Monster.nameMyMonster(rarity),rarity,lvl),
-                new Monster(Monster.nameMyMonster(rarity),rarity,lvl)));
+
+        return new ArrayList<>(Arrays.asList(new Monster(rarity, mLvl),
+                new Monster(rarity, mLvl),
+                new Monster(rarity, mLvl)));
     }
 
     /**
@@ -166,51 +197,62 @@ public  class GameLogic {
             case "Rogue" -> dbm.insertRogue((Rogue) player);
         }
     }
-    public void fightStage(ArrayList<Character> stage, Character player){
 
-        for(Character m: stage){
+    public void fightStage(ArrayList<Character> stage, Character player) {
+        saveChar(player);
+        for (Character m : stage) {
+
             String mdmg;
             String pdmg;
+            m.dmg=0;
+            player.dmg=0;
             m.dmgCalc();
             player.dmgCalc();
-            System.out.println(m.name + m.lvl + " blockiert den weg und begibt sich in Angriffsstellung" );
-            if (player.getInitiative()<m.getInitiative()) {
+            System.out.println(m.name + " lvl " + m.lvl + " blockiert den weg und begibt sich in Angriffsstellung");
+            if (player.getInitiative() < m.getInitiative()) {
                 System.out.println(m.name + " ist flinker und greift zuerst an");
-                while (m.currentHealth<=0 || player.currentHealth<=0){
+                while (m.currentHealth > 0 || player.currentHealth > 0) {
                     mdmg = player.defCalc(m.getDmg());
-                    System.out.println( m.name + " fügt dir " + mdmg + " Schaden zu.");
+                    System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
                     pdmg = m.defCalc(player.getDmg());
-                    System.out.println( "Du greifst an und fügst " + pdmg + " Schaden zu.");}
-            }else {
+                    System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
+                }
+            } else {
                 System.out.println("Du bist schneller als " + m.name);
-                while (m.currentHealth <= 0 || player.currentHealth <= 0) {
+                while (m.currentHealth > 0 || player.currentHealth > 0) {
                     pdmg = m.defCalc(player.getDmg());
                     System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
                     mdmg = player.defCalc(m.getDmg());
                     System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
                 }
             }
-            if(m.currentHealth<=0){
-                System.out.println("Du warst gegen " +m.name +" siegreich und setzt deinen weg durch den Dungeon fort");
-                if (player.currentExp>=player.maxExp){
+            if (m.currentHealth <= 0) {
+                System.out.println("Du warst gegen " + m.name + " siegreich und setzt deinen weg durch den Dungeon fort");
+                if (player.currentExp >= player.maxExp) {
                     player.onLvlUp();
                 }
-            }else{
-                System.out.println(m.name +" hat dich besiegt. GAME OVER ");
+            } else if (player.currentHealth <= 0) {
+                System.out.println(m.name + " hat dich besiegt. GAME OVER ");
                 break;
             }
 
-            }
-        saveChar(player);
+
         }
-        public boolean nextStage(){
+
+
+    }
+
+    public boolean nextStage() {
         Scanner cont = new Scanner(System.in);
-        String answ =cont.nextLine();
-            System.out.println("Do you want to continue? Y/N");
-            if (answ.equalsIgnoreCase("y")) {return true;}
-            else {return false}
+        String answ = cont.nextLine();
+        System.out.println("Do you want to continue? Y/N");
+        if (answ.equalsIgnoreCase("y")) {
+            return true;
+        } else {
+            return false;
         }
     }
+}
 
 
 

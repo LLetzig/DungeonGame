@@ -1,7 +1,7 @@
 public class Warrior extends Character {
     protected int strength;
     protected int maxArmor;
-    protected int currentArmor;
+    protected double currentArmor;
 
     public int getStrength() {
         return strength;
@@ -19,7 +19,7 @@ public class Warrior extends Character {
         this.maxArmor = maxArmor;
     }
 
-    public int getCurrentArmor() {
+    public double getCurrentArmor() {
         return currentArmor;
     }
 
@@ -76,10 +76,16 @@ public class Warrior extends Character {
 
 
     public String defCalc(double dmg) {
-        double diff = currentHealth;
-        currentHealth -= dmg - currentArmor;
-        currentArmor -= diff -currentHealth;
-        return Double.toString(diff - currentHealth);
+        double endDmg = 0;
+        if (dmg > currentArmor){
+            endDmg = dmg - currentArmor;
+            currentArmor= 0;
+        }else{
+            currentArmor -= dmg;
+        }
+
+        currentHealth -=endDmg;
+        return Double.toString( endDmg);
     }
 
     @Override
@@ -95,4 +101,21 @@ public class Warrior extends Character {
         currentExp=0;
     }
 
+    @Override
+    public String toString() {
+        return "Warrior{" +
+                "strength=" + strength +
+                ", maxArmor=" + maxArmor +
+                ", currentArmor=" + currentArmor +
+                ", name='" + name + '\'' +
+                ", maxHealth=" + maxHealth +
+                ", currentHealth=" + currentHealth +
+                ", baseAttack=" + baseAttack +
+                ", lvl=" + lvl +
+                ", initiative=" + initiative +
+                ", dmg=" + dmg +
+                ", maxExp=" + maxExp +
+                ", currentExp=" + currentExp +
+                "} " + super.toString();
+    }
 }

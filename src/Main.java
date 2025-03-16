@@ -10,14 +10,30 @@ public class Main {
 
         Character player = new Warrior("Templatio");
         GameLogic gl = new GameLogic();
-        while (true){
-            player = gl.menu();
-        while (!conti) {
-            ArrayList<Character> stage = gl.createStage(gl.setStage());
+//        Monster m = new Monster(2,4);
+//        System.out.println(m);
+//         m.dmgCalc();
+//        System.out.println(m.dmg);
+//        m.dmgCalc();
+//        System.out.println(m.dmg);
+//        m.dmgCalc();
+//        System.out.println(m.dmg);
+//        System.out.println(player.defCalc(m.dmg));
+//        System.out.println(player.defCalc(m.dmg));
+//        System.out.println(player.defCalc(m.dmg));
+//        System.out.println(player.defCalc(m.dmg));
+//        System.out.println(player.defCalc(m.dmg));
+//        System.out.println(player.defCalc(m.dmg));
+
+            int a = gl.setStage();
+        System.out.println(a);
+        System.out.println(player);
+            ArrayList<Character> stage = gl.createStage(a);
+            stage.forEach(System.out::println);
             gl.fightStage(stage, player);
             conti = gl.nextStage();
-        }
-    }
+
+
 
 
 
