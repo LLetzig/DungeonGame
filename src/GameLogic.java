@@ -200,8 +200,14 @@ public class GameLogic {
 
     public void fightStage(ArrayList<Character> stage, Character player) {
         saveChar(player);
+        boolean hasNext= true;
+        int letzterIndex = stage.size() -1;
+        int counter = 0;
         for (Character m : stage) {
-
+            if (counter==letzterIndex){
+                hasNext=false;
+            }
+            counter ++;
             String mdmg;
             String pdmg;
             m.dmg=0;
@@ -211,26 +217,49 @@ public class GameLogic {
             System.out.println(m.name + " lvl " + m.lvl + " blockiert den weg und begibt sich in Angriffsstellung");
             if (player.getInitiative() < m.getInitiative()) {
                 System.out.println(m.name + " ist flinker und greift zuerst an");
-                while (m.currentHealth > 0 || player.currentHealth > 0) {
+                while (m.currentHealth > 0 && player.currentHealth > 0) {
                     mdmg = player.defCalc(m.getDmg());
                     System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
-                    pdmg = m.defCalc(player.getDmg());
-                    System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
+                    if(player.currentHealth>=0){
+                        pdmg = m.defCalc(player.getDmg());
+                        System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
+                    }
+
                 }
             } else {
                 System.out.println("Du bist schneller als " + m.name);
-                while (m.currentHealth > 0 || player.currentHealth > 0) {
+                while (m.currentHealth > 0 && player.currentHealth > 0) {
                     pdmg = m.defCalc(player.getDmg());
                     System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
-                    mdmg = player.defCalc(m.getDmg());
-                    System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
+                    System.out.println("monsta lebn 2 " + m.currentHealth);
+                    if(m.currentHealth>=0){
+                        mdmg = player.defCalc(m.getDmg());
+                        System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
+                        System.out.println("spieler lebn 2 " + player.currentHealth);
+                    }
+
                 }
             }
             if (m.currentHealth <= 0) {
-                System.out.println("Du warst gegen " + m.name + " siegreich und setzt deinen weg durch den Dungeon fort");
-                if (player.currentExp >= player.maxExp) {
-                    player.onLvlUp();
+                if (!hasNext){
+                    System.out.println("Du warst gegen "+ m.name +  " siegreich. Alle Monster in auf dieser Stufe wurden besiegt");
+                    if (player.currentExp >= player.maxExp) {
+                        player.onLvlUp();
+                    }
+                    boolean next = nextStage();
+                    if (next){
+                        stage = createStage(setStage());
+                        fightStage(stage, player);
+
+                    }
                 }
+                else{
+                    System.out.println("Du warst gegen " + m.name + " siegreich und setzt deinen weg durch den Dungeon fort");
+                    if (player.currentExp >= player.maxExp) {
+                        player.onLvlUp();
+                    }
+                }
+
             } else if (player.currentHealth <= 0) {
                 System.out.println(m.name + " hat dich besiegt. GAME OVER ");
                 break;
@@ -243,14 +272,20 @@ public class GameLogic {
     }
 
     public boolean nextStage() {
+        String answ;
         Scanner cont = new Scanner(System.in);
-        String answ = cont.nextLine();
         System.out.println("Do you want to continue? Y/N");
-        if (answ.equalsIgnoreCase("y")) {
-            return true;
-        } else {
-            return false;
+        answ = cont.nextLine();
+
+        while(true){
+            if (answ.equalsIgnoreCase("y")) {
+                return true;
+            } else if (answ.equalsIgnoreCase("n")){
+                return false;
+            }
+
         }
+
     }
 }
 
