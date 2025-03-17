@@ -8,7 +8,7 @@ public class Main {
         DBM db = new DBM();
         db.createTables();
 
-        Character player = new Warrior("Templatio");
+        Character player = new Warrior("Templato");
         GameLogic gl = new GameLogic();
 //        Monster m = new Monster(2,4);
 //        System.out.println(m);
@@ -25,13 +25,15 @@ public class Main {
 //        System.out.println(player.defCalc(m.dmg));
 //        System.out.println(player.defCalc(m.dmg));
 
-            int a = gl.setStage();
-        System.out.println(a);
-        System.out.println(player);
-            ArrayList<Character> stage = gl.createStage(a);
-            stage.forEach(System.out::println);
+
+//
+        player = gl.menu();
+//
+            ArrayList<Character> stage = gl.createStage(gl.setStage());
             gl.fightStage(stage, player);
-            conti = gl.nextStage();
+//        boolean test = gl.nextStage();
+//        System.out.println(test);
+
 
 
 
