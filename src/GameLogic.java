@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
+
 import java.util.Scanner;
 
 public class GameLogic {
@@ -56,7 +56,7 @@ public class GameLogic {
             █                                                                               █
             █         -reads books             -knife nerd           -smooth brained        █
             █           all day                                                             █
-            █         + lifedrain              +knife nerd           + too dumb             █
+            █         + life drain              +knife nerd           + too dumb             █
             █                                                          to feel pain         █
             █                                                                               █
             █             [1]                      [2]                      [3]             █
@@ -65,12 +65,12 @@ public class GameLogic {
             """;
 
     /**
-     * es ist ein menü...
+     * es ist ein menü ...
      *
      * @return neuer oder datenbank char
      */
     public Character menu() {
-        Character player = new Warrior("menuman");
+        Character player = new Warrior("menu man");
         int value = 0;
         System.out.println(splash);
         Scanner sc = new Scanner(System.in);
@@ -86,12 +86,15 @@ public class GameLogic {
                 System.out.println(player);
                 break;
             } else if (value == 2) {
+
+                DBM.showAllSaves();
                 player = db.getMage(1);
             } else if (value == 3) {
                 System.out.println("bye");
+                break;
             } else {
                 System.out.println("1,2 oder 3");
-                break;
+
             }
 
         }
@@ -117,7 +120,7 @@ public class GameLogic {
      */
     public static Character chooseChar(String name) {
         Scanner sc = new Scanner(System.in);
-        int cl = 0;
+        int cl;
         System.out.println(theCharGang);
         Character p = new Warrior("ULF");
         System.out.println("Choose your class");
@@ -158,20 +161,20 @@ public class GameLogic {
         switch (stageLvl) {
             case 1 -> {
                 rarity = 1;
-                mLvl =  (int)Math.round(Math.random() + 1) ;
+                mLvl = (int) Math.round(Math.random() + 1);
             }
             case 2 -> {
                 rarity = (Math.random() * 2) < 1 ? 1 : 2;
-                mLvl =  (int)Math.round((Math.random() *2)+ 1) ;
+                mLvl = (int) Math.round((Math.random() * 2) + 1);
             }
 
             case 3 -> {
                 rarity = 2;
-                mLvl = (int)Math.round(Math.random() + 2) ;
+                mLvl = (int) Math.round(Math.random() + 2);
             }
             case 4 -> {
                 rarity = (Math.random() * 3) < 2 ? 2 : 3;
-                mLvl =  (int)Math.round((Math.random() *2)+ 2) ;
+                mLvl = (int) Math.round((Math.random() * 2) + 2);
             }
             case 5 -> {
                 rarity = 3;
@@ -198,89 +201,96 @@ public class GameLogic {
         }
     }
 
+
+    /**
+     * @param stage  Arrayliste mit gegnern generiert aus createStage()
+     * @param player Spielercharakter
+     */
     public void fightStage(ArrayList<Character> stage, Character player) {
+        //Spielstand wird am start gespeichert
         saveChar(player);
-        boolean hasNext= true;
-        int letzterIndex = stage.size() -1;
+        boolean hasNext = true;
+        int letzterIndex = stage.size() - 1;
         int counter = 0;
         for (Character m : stage) {
-            if (counter==letzterIndex){
-                hasNext=false;
+            //counter für textausgabe für letzten besiegten gegner und weiterführende logik nach Beenden der Stage
+            if (counter == letzterIndex) {
+                hasNext = false;
             }
-            counter ++;
+            counter++;
             String mdmg;
             String pdmg;
-            m.dmg=0;
-            player.dmg=0;
+            // dmg ist eingangs auf 0 oder noch nicht an lvlup angepasst
             m.dmgCalc();
             player.dmgCalc();
-            System.out.println(m.name + " lvl " + m.lvl + " blockiert den weg und begibt sich in Angriffsstellung");
+            //Todo monsterspezifischer String?
+            System.out.println(m.name + " lvl " + m.lvl + " is blocking your Path");
+            //TODO in eigene Methode auslagern um code dopplung zu vermeiden
             if (player.getInitiative() < m.getInitiative()) {
-                System.out.println(m.name + " ist flinker und greift zuerst an");
+                System.out.println(m.name + " is a fast one and attacks you first.");
                 while (m.currentHealth > 0 && player.currentHealth > 0) {
                     mdmg = player.defCalc(m.getDmg());
-                    System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
-                    if(player.currentHealth>=0){
+                    System.out.println(m.name + " attacks you and deals " + mdmg + " damage.");
+                    System.out.println("Your HP: " + player.currentHealth +"/" + player.maxHealth);
+                    if (player.currentHealth >= 0) {
                         pdmg = m.defCalc(player.getDmg());
-                        System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
+                        System.out.println("You attack and deal " + pdmg + " damage");
+                        System.out.println(m.name + " has " + m.currentHealth +"/"+m.maxHealth + " HP");
                     }
 
                 }
             } else {
-                System.out.println("Du bist schneller als " + m.name);
+                System.out.println("You are faster than " + m.name);
                 while (m.currentHealth > 0 && player.currentHealth > 0) {
                     pdmg = m.defCalc(player.getDmg());
-                    System.out.println("Du greifst an und fügst " + pdmg + " Schaden zu.");
-                    System.out.println("monsta lebn 2 " + m.currentHealth);
-                    if(m.currentHealth>=0){
+                    System.out.println("You attack and deal " + pdmg + " damage");
+                    System.out.println(m.name + " has " + m.currentHealth +"/"+m.maxHealth + " HP");
+                    if (m.currentHealth >= 0) {
                         mdmg = player.defCalc(m.getDmg());
-                        System.out.println(m.name + " fügt dir " + mdmg + " Schaden zu.");
-                        System.out.println("spieler lebn 2 " + player.currentHealth);
+                        System.out.println(m.name + " attacks you and deals " + mdmg + " damage.");
+                        System.out.println("Your HP: " + player.currentHealth +"/" + player.maxHealth);
                     }
 
                 }
             }
             if (m.currentHealth <= 0) {
-                if (!hasNext){
-                    System.out.println("Du warst gegen "+ m.name +  " siegreich. Alle Monster in auf dieser Stufe wurden besiegt");
-                    if (player.currentExp >= player.maxExp) {
-                        player.onLvlUp();
-                    }
+                //exp für sieg und lvlup check
+                ((Monster) m).giveEXP(player);
+                System.out.println("you gained xp and  now have: " + player.getCurrentExp() + "/"+ player.maxExp +" exp");
+                if (player.currentExp >= player.maxExp) {
+                    player.onLvlUp();
+                    System.out.println("You leveled up to lvl " + player.getLvl() );
+                }
+                //ist letzter Gegner?
+                if (!hasNext) {
+                    player.currentHealth = player.maxHealth;
+                    System.out.println("You have slain " + m.name + " . \n All monsters on this stage have been defeated");
+                   //Abfrage, ob weitere Stage
                     boolean next = nextStage();
-                    if (next){
+                    if (next) {
                         stage = createStage(setStage());
                         fightStage(stage, player);
-
                     }
+                } else {
+                    System.out.println("You have slain " + m.name + " and proceed your journey through the dungeon");
                 }
-                else{
-                    System.out.println("Du warst gegen " + m.name + " siegreich und setzt deinen weg durch den Dungeon fort");
-                    if (player.currentExp >= player.maxExp) {
-                        player.onLvlUp();
-                    }
-                }
-
             } else if (player.currentHealth <= 0) {
-                System.out.println(m.name + " hat dich besiegt. GAME OVER ");
+                System.out.println(m.name + " killed you. GAME OVER ");
                 break;
             }
-
-
         }
-
-
     }
 
     public boolean nextStage() {
-        String answ;
+
         Scanner cont = new Scanner(System.in);
         System.out.println("Do you want to continue? Y/N");
-        answ = cont.nextLine();
+        String answ = cont.nextLine();
 
-        while(true){
+        while (true) {
             if (answ.equalsIgnoreCase("y")) {
                 return true;
-            } else if (answ.equalsIgnoreCase("n")){
+            } else if (answ.equalsIgnoreCase("n")) {
                 return false;
             }
 

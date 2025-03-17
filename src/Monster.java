@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class Monster extends Character {
     protected int rarity;
+    protected  int lootEXP;
     static ArrayList<String>low = new ArrayList<>(Arrays.asList("lesser Ghoul", "Hamster", "Rabbit", "Crow", "Slime", "Goblin"));
     static ArrayList<String>mid = new ArrayList<>( Arrays.asList("Big Hamster", "rabid Rabbit", "Zombie", "Eagle", "metal Slime", "Hobgoblin"));
     static ArrayList<String>rare = new ArrayList<>(Arrays.asList("King Hamster", "Raging assassination Rabbit", "Vampire", "Griffin", "all consuming BLOB", "Ork Boss"));
@@ -16,6 +17,7 @@ public class Monster extends Character {
         maxHealth=50 + (5*rarity);
         baseAttack = 10 + (2*rarity);
         initiative = 0.8 + (0.1*rarity);
+        lootEXP = 5 *rarity;
         this.lvl=lvl;
 
         for (int i = 1; i <= lvl; i++) {
@@ -44,7 +46,14 @@ public class Monster extends Character {
     baseAttack += 3 + (5*rarity);
     initiative +=  .05 * rarity ;
     }
+
+    /**
+     * namen"generator"
+     * @param rarity bestimmt arraylist aus der name gewählt wird
+     * @return Monstername
+     */
     public static String nameMyMonster(int rarity) {
+        // alle Arraylisten gleich lang. trotzdem redundant, weil shuffle schon random sortiert.
         int rand = new Random().nextInt(low.size());
         return switch (rarity) {
             case 1 -> {
@@ -59,10 +68,13 @@ public class Monster extends Character {
                 Collections.shuffle(rare);
                 yield rare.get(rand);
             }
-            default -> "Randalf der fehler";
+            default -> "Randalf der Fehler";
         };
     }
 
+    public   void giveEXP(Character player){
+        player.currentExp +=lootEXP;
+    }
     @Override
     public String toString() {
         return "Monster{" +

@@ -28,9 +28,9 @@ public class Main {
 
 //
         player = gl.menu();
-//
-            ArrayList<Character> stage = gl.createStage(gl.setStage());
-            gl.fightStage(stage, player);
+////
+//            ArrayList<Character> stage = gl.createStage(gl.setStage());
+//            gl.fightStage(stage, player);
 //        boolean test = gl.nextStage();
 //        System.out.println(test);
 

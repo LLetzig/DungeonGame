@@ -115,4 +115,5 @@ public abstract class Character {
 
     abstract public void onLvlUp();
 
+    //TODO schönes toString?
 }

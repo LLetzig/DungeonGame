@@ -169,8 +169,8 @@ public class DBM {
     }
 
     /**
-     * erstellt Warrior Objekt
-     * @param id
+     * erstellt Warrior Objekt aus Db daten
+     * @param id PK des spielstandes
      * @return Warrior obj
      */
     public Warrior getWarrior(int id) {
@@ -204,9 +204,9 @@ public class DBM {
     }
 
     /**
-     * erstellt Rogueobjekt
-     * @param id
-     * @return
+     * erstellt Rogueobjekt aus db daten
+     * @param id id
+     * @return Rogue
      */
     public Rogue getRogue(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
@@ -239,9 +239,9 @@ public class DBM {
     }
 
     /**
-     * erstellt Rogueobjekt
-     * @param id
-     * @return
+     * erstellt Mage aus db Daten
+     * @param id id
+     * @return Mage
      */
     public Mage getMage(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
@@ -276,13 +276,15 @@ public class DBM {
     /**
      * Anzeige aller Spielstände
      */
-    public void showAllSaves(){
+    //todo nummerieren um später wählen zu können
+    public static void showAllSaves(){
         String[] tables = {"warrior", "rogue", "mage"};
 
         try (Connection conn = DBH.connect();
              Statement stmt = conn.createStatement()) {
 
             for (String table : tables) {
+
                 String query = "SELECT name, lvl FROM " + table;
                 try (ResultSet rs = stmt.executeQuery(query)) {
                     System.out.println("=== " + table.toUpperCase() + " ===");
@@ -290,7 +292,7 @@ public class DBM {
                     int columnCount = rs.getMetaData().getColumnCount();
                     while (rs.next()) {
                         for (int i = 1; i <= columnCount; i++) {
-                            System.out.print(table + rs.getMetaData().getColumnName(i) + ": " + rs.getString(i) + " | ");
+                            System.out.print( rs.getMetaData().getColumnName(i).toUpperCase() + ": " + rs.getString(i).toUpperCase() + " | ");
                         }
                         System.out.println();
                     }
