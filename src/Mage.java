@@ -54,6 +54,7 @@ public class Mage extends Character {
 
     @Override
     public void onLvlUp() {
+        lvl++;
         maxHealth +=5;
         mana += 5;
         intelligence += 10;
@@ -69,6 +70,23 @@ public class Mage extends Character {
             maxHealth += 0.5 * dmg;
             System.out.println( this.name + " drains life forcefully ");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Mage{" +
+                "mana=" + mana +
+                ", intelligence=" + intelligence +
+                ", name='" + name + '\'' +
+                ", maxHealth=" + maxHealth +
+                ", currentHealth=" + currentHealth +
+                ", baseAttack=" + baseAttack +
+                ", lvl=" + lvl +
+                ", initiative=" + initiative +
+                ", dmg=" + dmg +
+                ", maxExp=" + maxExp +
+                ", currentExp=" + currentExp +
+                '}';
     }
 }
 

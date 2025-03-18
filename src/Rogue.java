@@ -70,6 +70,7 @@ public class Rogue extends Character {
 
     @Override
     public void onLvlUp() {
+        lvl++;
         maxHealth += 5;
         dexterity += 10;
         if (crit < 0.75) {

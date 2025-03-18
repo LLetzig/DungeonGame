@@ -90,7 +90,7 @@ public class Warrior extends Character {
 
     @Override
     public void onLvlUp() {
-
+        lvl++;
         maxHealth +=5;
         currentHealth= maxHealth;
         strength += 10;

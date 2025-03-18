@@ -1,10 +1,23 @@
+import java.io.File;
 import java.sql.*;
+import java.util.Scanner;
+
 
 public class DBM {
     /**
      * erstellen von Spielstand tabellen, falls nicht vorhanden.
      */
+    public void createDir(){
+        File directory = new File("db/");
+        if (!directory.exists()){
+            boolean mkdir = directory.mkdir();
+            if (!mkdir) {
+                System.out.println("Directory already existent");
+            }
+        }
+    }
     public  void createTables() {
+
         String warrior = """
         CREATE TABLE IF NOT EXISTS Warrior (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,7 +78,7 @@ public class DBM {
             stmt.execute(mage);
             stmt.execute(rogue);
 
-            System.out.println("Tabellen erstellt oder existieren bereits");
+
 
         } catch (SQLException e) {
             System.out.println("Fehler: " + e.getMessage());
@@ -173,7 +186,7 @@ public class DBM {
      * @param id PK des spielstandes
      * @return Warrior obj
      */
-    public Warrior getWarrior(int id) {
+    public static Warrior getWarrior(int id) {
         String sql = "SELECT * FROM Warrior WHERE id = ?";
         try (Connection conn = DBH.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -208,8 +221,8 @@ public class DBM {
      * @param id id
      * @return Rogue
      */
-    public Rogue getRogue(int id) {
-        String sql = "SELECT * FROM Warrior WHERE id = ?";
+    public static Rogue getRogue(int id) {
+        String sql = "SELECT * FROM Rogue WHERE id = ?";
         try (Connection conn = DBH.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -243,8 +256,8 @@ public class DBM {
      * @param id id
      * @return Mage
      */
-    public Mage getMage(int id) {
-        String sql = "SELECT * FROM Warrior WHERE id = ?";
+    public static Mage getMage(int id) {
+        String sql = "SELECT * FROM Mage WHERE id = ?";
         try (Connection conn = DBH.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -279,20 +292,24 @@ public class DBM {
     //todo nummerieren um später wählen zu können
     public static void showAllSaves(){
         String[] tables = {"warrior", "rogue", "mage"};
-
+        int count1 = 0;
+        int count2 = 0;
         try (Connection conn = DBH.connect();
              Statement stmt = conn.createStatement()) {
 
             for (String table : tables) {
-
+                count1++;
+                count2= 0;
                 String query = "SELECT name, lvl FROM " + table;
                 try (ResultSet rs = stmt.executeQuery(query)) {
                     System.out.println("=== " + table.toUpperCase() + " ===");
 
                     int columnCount = rs.getMetaData().getColumnCount();
                     while (rs.next()) {
+                        count2++;
+                        System.out.print("" + count1 + count2 +": ");
                         for (int i = 1; i <= columnCount; i++) {
-                            System.out.print( rs.getMetaData().getColumnName(i).toUpperCase() + ": " + rs.getString(i).toUpperCase() + " | ");
+                            System.out.print(  rs.getMetaData().getColumnName(i).toUpperCase() + ": " + rs.getString(i).toUpperCase() + " | ");
                         }
                         System.out.println();
                     }
@@ -302,6 +319,26 @@ public class DBM {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    public static int[] computeChoice(){
+        Scanner scc = new Scanner(System.in);
+        System.out.print("Enter the number of your choosen Character: ");
+        String choice = scc.nextLine();
+        int[] c = new int[10];
+        String table= choice.substring(0,1);
+        String id= choice.substring(1);
+        c[0] = Integer.parseInt(table);
+        c[1] = Integer.parseInt(id);
+        return c;
+    }
+    public static Character getSaveByChoice(int[] c){
+       Character p = null;
+        switch (c[0]){
+           case 1 ->  p = getWarrior(c[1]);
+           case 2 -> p = getRogue(c[1]);
+           case 3 -> p = getMage(c[1]);
+       }
+       return p;
     }
 }
 

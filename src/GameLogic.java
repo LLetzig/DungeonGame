@@ -88,7 +88,9 @@ public class GameLogic {
             } else if (value == 2) {
 
                 DBM.showAllSaves();
-                player = db.getMage(1);
+                int[] choice = DBM.computeChoice();
+                 player = DBM.getSaveByChoice(choice);
+                break;
             } else if (value == 3) {
                 System.out.println("bye");
                 break;
@@ -167,7 +169,6 @@ public class GameLogic {
                 rarity = (Math.random() * 2) < 1 ? 1 : 2;
                 mLvl = (int) Math.round((Math.random() * 2) + 1);
             }
-
             case 3 -> {
                 rarity = 2;
                 mLvl = (int) Math.round(Math.random() + 2);
@@ -226,32 +227,11 @@ public class GameLogic {
             //Todo monsterspezifischer String?
             System.out.println(m.name + " lvl " + m.lvl + " is blocking your Path");
             //TODO in eigene Methode auslagern um code dopplung zu vermeiden
+
             if (player.getInitiative() < m.getInitiative()) {
-                System.out.println(m.name + " is a fast one and attacks you first.");
-                while (m.currentHealth > 0 && player.currentHealth > 0) {
-                    mdmg = player.defCalc(m.getDmg());
-                    System.out.println(m.name + " attacks you and deals " + mdmg + " damage.");
-                    System.out.println("Your HP: " + player.currentHealth +"/" + player.maxHealth);
-                    if (player.currentHealth >= 0) {
-                        pdmg = m.defCalc(player.getDmg());
-                        System.out.println("You attack and deal " + pdmg + " damage");
-                        System.out.println(m.name + " has " + m.currentHealth +"/"+m.maxHealth + " HP");
-                    }
-
-                }
+                calcIni(m,player);
             } else {
-                System.out.println("You are faster than " + m.name);
-                while (m.currentHealth > 0 && player.currentHealth > 0) {
-                    pdmg = m.defCalc(player.getDmg());
-                    System.out.println("You attack and deal " + pdmg + " damage");
-                    System.out.println(m.name + " has " + m.currentHealth +"/"+m.maxHealth + " HP");
-                    if (m.currentHealth >= 0) {
-                        mdmg = player.defCalc(m.getDmg());
-                        System.out.println(m.name + " attacks you and deals " + mdmg + " damage.");
-                        System.out.println("Your HP: " + player.currentHealth +"/" + player.maxHealth);
-                    }
-
-                }
+                calcIni(player,m);
             }
             if (m.currentHealth <= 0) {
                 //exp für sieg und lvlup check
@@ -270,6 +250,8 @@ public class GameLogic {
                     if (next) {
                         stage = createStage(setStage());
                         fightStage(stage, player);
+                    }else{
+                        menu();
                     }
                 } else {
                     System.out.println("You have slain " + m.name + " and proceed your journey through the dungeon");
@@ -296,6 +278,24 @@ public class GameLogic {
 
         }
 
+    }
+    public void calcIni(Character highIni, Character lowIni){
+        String highDmg;
+        String lowDmg ;
+        highIni.dmgCalc();
+        lowIni.dmgCalc();
+        System.out.println(highIni.name + " is faster and attacks first.");
+        while (highIni.currentHealth > 0 && lowIni.currentHealth > 0) {
+            highDmg = lowIni.defCalc(highIni.getDmg());
+            System.out.println(highIni.name + " attacks  and deals " + highDmg + " damage.");
+            System.out.println(lowIni.name +" HP: " + lowIni.currentHealth +"/" + lowIni.maxHealth);
+            if (lowIni.currentHealth > 0) {
+                lowDmg = highIni.defCalc(lowIni.getDmg());
+                System.out.println(lowIni.name + " attack and deal " + lowDmg + " damage");
+                System.out.println(highIni.name + " has " + highIni.currentHealth +"/"+highIni.maxHealth + " HP");
+            }
+
+        }
     }
 }
 
