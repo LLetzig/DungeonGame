@@ -35,6 +35,7 @@ public class Rogue extends Character {
         currentHealth = maxHealth;
         initiative = 1.2;
         evasion = (double) dexterity / 100;
+        maxExp = 10;
 
     }
 

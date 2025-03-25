@@ -27,6 +27,7 @@ public class Mage extends Character {
         initiative = 1;
         mana = 10;
         intelligence = 25;
+        maxExp = 10;
 
         }
 

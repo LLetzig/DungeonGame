@@ -56,7 +56,7 @@ public class GameLogic {
             █                                                                               █
             █         -reads books             -knife nerd           -smooth brained        █
             █           all day                                                             █
-            █         + life drain              +knife nerd           + too dumb             █
+            █         + life drain              +knife nerd           + too dumb            █
             █                                                          to feel pain         █
             █                                                                               █
             █             [1]                      [2]                      [3]             █
