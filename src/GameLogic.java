@@ -207,7 +207,7 @@ public class GameLogic {
      * @param stage  Arrayliste mit gegnern generiert aus createStage()
      * @param player Spielercharakter
      */
-    public void fightStage(ArrayList<Character> stage, Character player) {
+    public void fightStage(ArrayList<Character> stage, Character player) throws InterruptedException {
         //Spielstand wird am start gespeichert
         saveChar(player);
         boolean hasNext = true;
@@ -224,14 +224,17 @@ public class GameLogic {
             // dmg ist eingangs auf 0 oder noch nicht an lvlup angepasst
             m.dmgCalc();
             player.dmgCalc();
-            //Todo monsterspezifischer String?
-            System.out.println(m.name + " lvl " + m.lvl + " is blocking your Path");
-            //TODO in eigene Methode auslagern um code dopplung zu vermeiden
+
+            System.out.println(m.name + " lvl " + m.lvl + Monster.getEntrance(m.name));
+
 
             if (player.getInitiative() < m.getInitiative()) {
                 calcIni(m,player);
+                Thread.sleep(1000);
+
             } else {
                 calcIni(player,m);
+                Thread.sleep(1000);
             }
             if (m.currentHealth <= 0) {
                 //exp für sieg und lvlup check
@@ -240,6 +243,7 @@ public class GameLogic {
                 if (player.currentExp >= player.maxExp) {
                     player.onLvlUp();
                     System.out.println("You leveled up to lvl " + player.getLvl() );
+                    Thread.sleep(2000);
                 }
                 //ist letzter Gegner?
                 if (!hasNext) {
@@ -287,12 +291,12 @@ public class GameLogic {
         System.out.println(highIni.name + " is faster and attacks first.");
         while (highIni.currentHealth > 0 && lowIni.currentHealth > 0) {
             highDmg = lowIni.defCalc(highIni.getDmg());
-            System.out.println(highIni.name + " attacks  and deals " + highDmg + " damage.");
+            System.out.println(highIni.name + " attacks and deals " + highDmg + " damage.");
             System.out.println(lowIni.name +" HP: " + lowIni.currentHealth +"/" + lowIni.maxHealth);
             if (lowIni.currentHealth > 0) {
                 lowDmg = highIni.defCalc(lowIni.getDmg());
-                System.out.println(lowIni.name + " attack and deal " + lowDmg + " damage");
-                System.out.println(highIni.name + " has " + highIni.currentHealth +"/"+highIni.maxHealth + " HP");
+                System.out.println(lowIni.name + " attack and deal " + lowDmg + " damage.");
+                System.out.println(highIni.name + " has " + highIni.currentHealth +"/"+highIni.maxHealth + " HP.");
             }
 
         }
