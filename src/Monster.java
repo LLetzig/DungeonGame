@@ -76,6 +76,11 @@ public class Monster extends Character {
         };
     }
 
+    /**
+     * passender satz zum Erscheinen des monster
+     * @param name monster name
+     * @return  passender satz
+     */
     public static String getEntrance (String name) {
         return switch (name) {
 
@@ -90,8 +95,10 @@ public class Monster extends Character {
     }
 
 
-
-
+    /**
+     * Übergabe der xp des Monsters and den Spieler
+     * @param player
+     */
     public   void giveEXP(Character player){
         player.currentExp += lootEXP;
     }

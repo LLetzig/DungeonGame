@@ -267,6 +267,10 @@ public class GameLogic {
         }
     }
 
+    /**
+     * bahnbrechende methode um fightStage() zu verschlanken
+     * @return bool je nach entscheidung
+     */
     public boolean nextStage() {
 
         Scanner cont = new Scanner(System.in);
@@ -283,6 +287,12 @@ public class GameLogic {
         }
 
     }
+
+    /**
+     * Schlagabtausch beginnend mit dem objekt welches die höhere Initiative hat
+     * @param highIni objekt mit höherer Ini
+     * @param lowIni objekt mit niedrigerer Ini
+     */
     public void calcIni(Character highIni, Character lowIni){
         String highDmg;
         String lowDmg ;
